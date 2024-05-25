@@ -11,6 +11,9 @@ public class Search<V>{
         edgeTo = new HashMap<>();
     }
 
+    public Search(MyGraph<String> graph, String almaty) {
+    }
+
     public boolean hasPathTo(V v) {
         return marked.contains(v);
     }

@@ -4,13 +4,12 @@ public class BreadthFirstSearch<V> extends Search<V> {
     private Map<Vertex<V>, Vertex<V>> edgeTo;
     private Set<Vertex<V>> marked;
 
-    public BreadthFirstSearch() {
-        this.edgeTo = new HashMap<>();
-        this.marked = new HashSet<>();
-    }
-
     public BreadthFirstSearch(V source) {
         super(source);
+    }
+
+    public BreadthFirstSearch(MyGraph<String> graph, String almaty) {
+        super(graph, almaty);
     }
 
     @Override

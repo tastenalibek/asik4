@@ -1,46 +1,48 @@
 import java.util.*;
 
 public class DijkstraSearch<V> extends Search<V> {
-    private Map<Vertex<V>, Double> distTo;
-    private Map<Vertex<V>, Vertex<V>> edgeTo;
-    private PriorityQueue<Vertex<V>> pq;
+    private Map<V, Double> distances = new HashMap<>();
 
-    public DijkstraSearch() {
-        super();
-        this.distTo = new HashMap<>();
-        this.edgeTo = new HashMap<>();
-    }
+    public DijkstraSearch(WeightedGraph<V> graph, V source) {
+        super(source);
 
-    @Override
-    public List<Vertex<V>> getPath(Vertex<V> source, Vertex<V> dest) {
-        dijkstra(source);
-        List<Vertex<V>> path = new ArrayList<>();
-        for (Vertex<V> x = dest; x != null; x = edgeTo.get(x)) {
-            path.add(x);
+        for (V v : graph.getVertices()) {
+            distances.put(v, Double.POSITIVE_INFINITY);
         }
-        Collections.reverse(path);
-        return path;
+
+        distances.put(source, 0.0);
+
+        dijkstra(graph);
     }
 
-    private void dijkstra(Vertex<V> source) {
-        pq = new PriorityQueue<>(Comparator.comparing(distTo::get));
-        distTo.put(source, 0.0);
-        pq.add(source);
+    private void dijkstra(WeightedGraph<V> graph) {
 
-        while (!pq.isEmpty()) {
-            Vertex<V> v = pq.poll();
-            for (Map.Entry<Vertex<V>, Double> entry : v.getAdjacentVertices().entrySet()) {
-                relax(v, entry.getKey(), entry.getValue());
+        while (true) {
+            V vertex = null;
+            double minDist = Double.POSITIVE_INFINITY;
+
+            for (V v : distances.keySet()) {
+                if (marked.contains(v) == false && distances.get(v) < minDist) {
+                    vertex = v;
+                    minDist = distances.get(v);
+                }
             }
-        }
-    }
 
-    private void relax(Vertex<V> v, Vertex<V> w, double weight) {
-        double dist = distTo.getOrDefault(v, Double.POSITIVE_INFINITY) + weight;
-        if (dist < distTo.getOrDefault(w, Double.POSITIVE_INFINITY)) {
-            distTo.put(w, dist);
-            edgeTo.put(w, v);
-            pq.add(w);
+            if (vertex == null) {
+                break;
+            }
+
+            marked.add(vertex);
+
+            for (V v : graph.getAdjacentVertices(vertex)) {
+                if (marked.contains(v) == false) {
+                    double newDist = distances.get(vertex) + graph.getWeight(vertex, v);
+                    if (newDist < distances.get(v)) {
+                        distances.put(v, newDist);
+                        edgeTo.put(v, vertex);
+                    }
+                }
+            }
         }
     }
 }

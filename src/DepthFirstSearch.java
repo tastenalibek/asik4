@@ -1,5 +1,3 @@
-
-
 public class DepthFirstSearch<Vertex> extends Search<Vertex> {
     public DepthFirstSearch(MyGraph<Vertex> graph, Vertex source) {
         super(source);
