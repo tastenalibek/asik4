@@ -1,42 +1,22 @@
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public class BreadthFirstSearch<V> extends Search<V> {
-    private Map<Vertex<V>, Vertex<V>> edgeTo;
-    private Set<Vertex<V>> marked;
-
-    public BreadthFirstSearch(V source) {
+public class BreadthFirstSearch<V> extends Search<V>{
+    public BreadthFirstSearch(MyGraph<V> graph, V source) {
         super(source);
+        bfs(graph, source);
     }
-
-    public BreadthFirstSearch(MyGraph<String> graph, String almaty) {
-        super(graph, almaty);
-    }
-
-    @Override
-    public List<Vertex<V>> getPath(Vertex<V> source, Vertex<V> dest) {
-        bfs(source);
-        List<Vertex<V>> path = new ArrayList<>();
-        if (!marked.contains(dest)) return path;
-
-        for (Vertex<V> x = dest; x != null; x = edgeTo.get(x)) {
-            path.add(x);
-        }
-        Collections.reverse(path);
-        return path;
-    }
-
-    private void bfs(Vertex<V> source) {
-        Queue<Vertex<V>> queue = new LinkedList<>();
-        marked.add(source);
-        queue.add(source);
-
-        while (!queue.isEmpty()) {
-            Vertex<V> v = queue.poll();
-            for (Vertex<V> w : v.getAdjacentVertices().keySet()) {
-                if (!marked.contains(w)) {
-                    edgeTo.put(w, v);
-                    marked.add(w);
-                    queue.add(w);
+    private void bfs(MyGraph<V> graph, V current) {
+        marked.add(current);
+        Queue<V> q = new LinkedList<>();
+        q.add(current);
+        while (!q.isEmpty()) {
+            V v = q.remove();
+            for (Vertex<V> vertex : graph.getVertex(v).getAdjacent_vertices().keySet()) {
+                if (!marked.contains(vertex.getData())) {
+                    marked.add(vertex.getData());
+                    edgeTo.put(vertex.getData(), v);
+                    q.add(vertex.getData());
                 }
             }
         }

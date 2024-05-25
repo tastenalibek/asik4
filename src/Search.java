@@ -1,9 +1,9 @@
 import java.util.*;
 
-public class Search<V>{
-    protected V source;
+public class Search<V> {
     protected Set<V> marked;
     protected Map<V, V> edgeTo;
+    protected final V source;
 
     public Search(V source) {
         this.source = source;
@@ -11,25 +11,18 @@ public class Search<V>{
         edgeTo = new HashMap<>();
     }
 
-    public Search(MyGraph<String> graph, String almaty) {
-    }
-
-    public boolean hasPathTo(V v) {
+    private boolean hasPathTo(V v) {
         return marked.contains(v);
     }
 
     public Iterable<V> pathTo(V v) {
-        if (hasPathTo(v) == false) {
-            return null;
+        if (!hasPathTo(v)) return null;
+        LinkedList<V> list = new LinkedList<>();
+        for (V i = v; i != source; i = edgeTo.get(i)) {
+            list.push(i);
         }
-
-        Stack<V> path = new Stack<>();
-        for (V x = v; x != null; x = edgeTo.get(x)) {
-            path.push(x);
-        }
-
-        return path;
+        list.push(source);
+        return list;
     }
-
 }
 

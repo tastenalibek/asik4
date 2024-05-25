@@ -1,76 +1,70 @@
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class WeightedGraph<V>{
-    private boolean directed;
-    private Map<V, Vertex<V>> mp = new HashMap<>();
-
-    public WeightedGraph(boolean directed) {
-        this.directed = directed;
-    }
+    private final boolean undirected;
+    private final Map<V, Vertex<V>> map = new HashMap<>();
 
     public WeightedGraph() {
-        this(false);
+        this.undirected = true;
+    }
+    public WeightedGraph(boolean undirected) {
+        this.undirected = undirected;
     }
 
-    public void addVertex(V data) {
-        mp.put(data, new Vertex<>(data));
+    public void addVertex(V vert) {
+        map.put(vert, new Vertex<>(vert));
     }
 
-    public void addEdge(V source, V dest, Double weight) {
-        if (mp.containsKey(source) == false) {
-            addVertex(source);
+    public void addEdge(V source, V dest, double weight) {
+        if (!hasVertex(source)){
+            addVertex((source));
         }
-
-        if (mp.containsKey(dest) == false) {
+        if (!hasVertex(dest)){
             addVertex(dest);
         }
-
-        mp.get(source).addAdjacentVertex(mp.get(dest), weight, map);
-
-        if (directed == false) {
-            mp.get(dest).addAdjacentVertex(mp.get(source), weight, map);
+        if (hasEdge(source, dest) || source.equals(dest)){
+            return;
         }
-
+        map.get(source).addAdjacentVertex(map.get(dest), weight);
+        if (undirected){
+            map.get(dest).addAdjacentVertex(map.get(source), weight);
+        }
     }
 
-
-    public boolean hasVertex(V data) {
-        return mp.containsKey(data);
+    public int getVerticesCount() {
+        return map.size();
     }
 
-    public Vertex<V> getVertex(V data) {
-        return mp.get(data);
+    public boolean hasVertex(V v) {
+        return map.containsKey(v);
     }
 
-    public Iterable<V> getVertices() {
-        return mp.keySet();
+    public void delete(V vert){
+        map.remove(vert);
     }
 
     public boolean hasEdge(V source, V dest) {
-        if (hasVertex(source) == false) {
+        if (!hasVertex(source)) {return false;}
+        if(map.get(source).getAdjacent_vertices() == null){
             return false;
         }
-
-        return mp.get(source).getAdjacentVertices().containsKey(mp.get(dest));
+        return map.get(source).getAdjacent_vertices().containsKey(map.get(dest));
     }
 
-    public Double getWeight(V source, V dest) {
-        if(hasEdge(source, dest) == false) {
+    public Double getWeight(V source, V dest){
+        if(!hasEdge(source, dest)) {
             return Double.POSITIVE_INFINITY;
         }
-
-        return mp.get(source).getAdjacentVertices().get(mp.get(dest));
+        return map.get(source).getAdjacent_vertices().get(map.get(dest));
     }
 
-    public Iterable<V> getAdjacentVertices(V data) {
-        return mp.keySet();
+    public Vertex<V> getVertex(V data){
+        return map.get(data);
     }
-
-
-
-
-
-
-
+    public Iterable<V> getAdjacent_vertices(){
+        return  map.keySet();
+    }
 }
